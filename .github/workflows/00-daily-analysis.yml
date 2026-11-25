@@ -55,6 +55,12 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements.txt
           python -c "import futu; print('✅ futu SDK import OK')"
+
+      - name: 安装表格图片渲染依赖（REPORT_TYPE=table）
+        if: ${{ (vars.REPORT_TYPE || secrets.REPORT_TYPE || 'table') == 'table' }}
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq wkhtmltopdf fonts-noto-cjk || echo "::warning::wkhtmltopdf install failed; table report will fall back to text"
       
       - name: 创建必要目录
         run: |
@@ -441,8 +447,9 @@ jobs:
           # ==========================================
           # 运行配置 ⬅️ 新增！
           # ==========================================
-          REPORT_TYPE: ${{ vars.REPORT_TYPE || secrets.REPORT_TYPE || 'simple' }}
+          REPORT_TYPE: ${{ vars.REPORT_TYPE || secrets.REPORT_TYPE || 'table' }}
           REPORT_LANGUAGE: ${{ vars.REPORT_LANGUAGE || secrets.REPORT_LANGUAGE || '' }}
+          REPORT_ZH_VARIANT: ${{ vars.REPORT_ZH_VARIANT || secrets.REPORT_ZH_VARIANT || 'tw' }}
           REPORT_SHOW_LLM_MODEL: ${{ vars.REPORT_SHOW_LLM_MODEL || secrets.REPORT_SHOW_LLM_MODEL || 'true' }}
           SINGLE_STOCK_NOTIFY: ${{ vars.SINGLE_STOCK_NOTIFY || secrets.SINGLE_STOCK_NOTIFY || 'false' }}
           MARKET_REVIEW_ENABLED: ${{ vars.MARKET_REVIEW_ENABLED || secrets.MARKET_REVIEW_ENABLED || 'true' }}

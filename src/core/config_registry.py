@@ -2806,7 +2806,7 @@ _FIELD_DEFINITIONS: Dict[str, Dict[str, Any]] = {
     },
     "REPORT_TYPE": {
         "title": "Report Type",
-        "description": "Report format: 'simple' (concise), 'full' (detailed), or 'brief' (3-5 sentences).",
+        "description": "Report format: 'simple' (concise), 'full' (detailed), 'brief' (3-5 sentences), or 'table' (key numbers in tables; Telegram receives an image).",
         "category": "notification",
         "data_type": "string",
         "ui_control": "select",
@@ -2814,8 +2814,8 @@ _FIELD_DEFINITIONS: Dict[str, Dict[str, Any]] = {
         "is_required": False,
         "is_editable": True,
         "default_value": "simple",
-        "options": ["simple", "full", "brief"],
-        "validation": {"enum": ["simple", "full", "brief"]},
+        "options": ["simple", "full", "brief", "table"],
+        "validation": {"enum": ["simple", "full", "brief", "table"]},
         "display_order": 55,
         "help_key": "settings.notification.report_output",
         "examples": [

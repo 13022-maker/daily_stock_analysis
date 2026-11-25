@@ -3930,6 +3930,8 @@ class StockAnalysisPipeline:
         report_type_str = getattr(self.config, 'report_type', 'simple').lower()
         if report_type_str == 'brief':
             report_type = ReportType.BRIEF
+        elif report_type_str == 'table':
+            report_type = ReportType.TABLE
         elif report_type_str == 'full':
             report_type = ReportType.FULL
         else:
@@ -4101,6 +4103,9 @@ class StockAnalysisPipeline:
                 elif report_type == ReportType.BRIEF:
                     report_content = self.notifier.generate_brief_report([result])
                     logger.info(f"[{stock_code}] Using brief report format")
+                elif report_type == ReportType.TABLE:
+                    report_content = self.notifier.generate_aggregate_report([result], report_type)
+                    logger.info(f"[{stock_code}] Using table report format")
                 else:
                     report_content = self.notifier.generate_single_stock_report(result)
                     logger.info(f"[{stock_code}] Using simple report format")
@@ -4511,6 +4516,13 @@ class StockAnalysisPipeline:
                         )
                     elif channel == NotificationChannel.TELEGRAM:
                         def _send_telegram_report() -> bool:
+                            if report_type == ReportType.TABLE:
+                                from src.table_report import render_table_png
+                                table_png = render_table_png(self.notifier, results)
+                                if table_png:
+                                    return self.notifier._send_telegram_photo(table_png)
+                                logger.warning("Table image unavailable; sending table report as text")
+                                return self.notifier.send_to_telegram(report)
                             use_image = self.notifier._should_use_image_for_channel(
                                 channel, image_bytes
                             )

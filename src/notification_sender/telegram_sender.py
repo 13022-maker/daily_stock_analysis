@@ -19,6 +19,7 @@ from src.formatters import (
     strip_hidden_markdown_metadata,
     utf16_len,
 )
+from src.zh_variant import to_report_variant
 
 
 logger = logging.getLogger(__name__)
@@ -90,7 +91,7 @@ class TelegramSender:
             # Telegram 消息最大长度 4096（按 UTF-16 code unit 计）
             max_length = 4096
 
-            sanitized_content = strip_hidden_markdown_metadata(content).strip()
+            sanitized_content = to_report_variant(strip_hidden_markdown_metadata(content)).strip()
             if not sanitized_content:
                 logger.warning("Telegram message content is empty, skipping")
                 return False
