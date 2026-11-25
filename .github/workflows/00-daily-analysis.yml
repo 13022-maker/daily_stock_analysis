@@ -57,7 +57,6 @@ jobs:
           python -c "import futu; print('✅ futu SDK import OK')"
 
       - name: 安装表格图片渲染依赖（REPORT_TYPE=table）
-        if: ${{ (vars.REPORT_TYPE || secrets.REPORT_TYPE || 'table') == 'table' }}
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y -qq wkhtmltopdf fonts-noto-cjk || echo "::warning::wkhtmltopdf install failed; table report will fall back to text"
