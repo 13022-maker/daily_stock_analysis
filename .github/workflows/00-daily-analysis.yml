@@ -58,8 +58,18 @@ jobs:
 
       - name: 安装表格图片渲染依赖（REPORT_TYPE=table）
         run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq wkhtmltopdf fonts-noto-cjk || echo "::warning::wkhtmltopdf install failed; table report will fall back to text"
+          sudo apt-get update || true
+          if ! sudo apt-get install -y --no-install-recommends wkhtmltopdf fonts-noto-cjk; then
+            echo "apt wkhtmltopdf install failed; falling back to upstream wkhtmltox package"
+            sudo apt-get install -y --no-install-recommends fonts-noto-cjk xfonts-75dpi xfonts-base || true
+            curl -fsSL -o /tmp/wkhtmltox.deb https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6.1-2/wkhtmltox_0.12.6.1-2.jammy_amd64.deb \
+              && sudo apt-get install -y /tmp/wkhtmltox.deb || true
+          fi
+          if command -v wkhtmltoimage >/dev/null; then
+            wkhtmltoimage --version
+          else
+            echo "::warning::wkhtmltoimage unavailable; table report will fall back to text"
+          fi
       
       - name: 创建必要目录
         run: |
